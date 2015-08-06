@@ -10,6 +10,13 @@ body {
     padding: 0;
 }
 
+hr {
+    border: none;
+    background-color: silver;
+    height: 1px;
+    margin: 12px 0;
+}
+
 .wrapper {
     background-color: white;
     padding: 1em;
@@ -34,6 +41,15 @@ body {
     font-size: 100%;
     font-weight: bold;
     margin-top: 1.4em;
+}
+
+.section-container {
+    margin: 12px 0;
+}
+
+.section-container.category {
+    padding: 12px;
+    border: 1px solid dimgray;
 }
 
 p {

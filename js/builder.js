@@ -1,14 +1,44 @@
 $(function() {
 
-    $('#plugin-selection-area > select').change(displaySelectedPluginConfiguration);
     $('#plugin-selection-area button.add').click(addPlugin);
     $('#plugin-selection-area .add-container button.confirm').click(confirmAddPlugin);
-    $('#config-area-impact .layouts button.add').click(addImpactLayout);
-    $('#config-area-impact .layouts button.confirm').click(confirmAddImpactLayout);
-    $('#config-area-impact .sites button.add').click(addImpactSite);
-    $('#config-area-impact .sites button.confirm').click(confirmAddImpactSite);
+    $('#config-area-impact button.layouts.add').click(addImpactLayout);
+    $('#config-area-impact button.layouts.confirm').click(confirmAddImpactLayout);
+    $('#config-area-impact button.sites.add').click(addImpactSite);
+    $('#config-area-impact button.sites.confirm').click(confirmAddImpactSite);
     $('#lookup-customer').click(displayPluginSelection);
-    $('#config-area-impact select.sites').change(displaySelectedImpactSiteConfiguration);
+
+    $('#plugin-selection-area > select').change(function() {
+        console.log('selected plugin changed');
+        var pluginName = getSelectedPlugin();
+        if ('string' === typeof pluginName) {
+            builderConfig[pluginName].displayConfig();
+            displayJSON();
+        }
+    });
+
+    $('#config-area-impact select.layouts').change(function() {
+        console.log('layout changed');
+        var container = $('#config-area-impact div.config-area');
+        container.show();
+    });
+
+    $('#config-area-impact select.sites').change(function() {
+        console.log('site changed');
+    });
+
+    $('#config-area-impact button.category-rulesets.add').click(function() {
+        console.log('Adding ruleset');
+        // var panel = buildImpactCategoryPanel();
+        // panel.insertBefore(this);
+        var data = getSelectedPluginData();
+        var layout = getSelectedImpactLayout();
+        data['layouts'][layout]['categoryRuleSets'].push({
+            'rules': []
+        });
+        setSelectedPluginData(data);
+        updateImpactLayoutConfigArea();
+    });
 
     var builderConfig = {
         'impactKpis4': {
@@ -26,6 +56,34 @@ $(function() {
                     },
                     'sourceConfigs': {}
                 };
+            },
+            displayConfig: function() {
+                //debugger;
+                var area = $('#config-area-impact');
+                var pluginConfig = getSelectedPluginData();
+                var i;
+                var option;
+                var select = $('select.layouts', area);
+                for (i in pluginConfig['layouts']) {
+                    if (pluginConfig['layouts'].hasOwnProperty(i)) {
+                        option = $(document.createElement('option'));
+                        option.text(i)
+                            .val(i)
+                            .appendTo(select);
+                    }
+                }
+                select.change();
+                select = $('select.sites', area);
+                for (i in pluginConfig['sites']) {
+                    if (pluginConfig['sites'].hasOwnProperty(i)) {
+                        option = $(document.createElement('option'));
+                        option.text(i)
+                            .val(i)
+                            .appendTo(select);
+                    }
+                }
+                select.change();
+                area.show();
             }
         },
         'someOtherPlugin': {
@@ -34,13 +92,47 @@ $(function() {
                     'foo': 'bar'
                 };
             }
+        },
+        displayConfig: function() {
+            console.log('Not implemented');
         }
     };
 
     setCustomerData(
         '10660',
         {
-            'impactKpis4': builderConfig['impactKpis4'].makeDefault(),
+            'impactKpis4': {
+                'debugging': true,
+                'sessionTimeout': 30,
+                'cookieTimeout': 7*24*60*60*1000,
+                'sites': {
+                    'www.foo.com': {
+                        'layout': 'default',
+                        'sourceConfig': 'default',
+                        'cookie': {
+                            'domain': '.www.foo.com'
+                        },
+                        'enableMetadataReporting': false
+                    }
+                },
+                'layouts': {
+                    'default': {
+                        'kpi': [],
+                        'categoryRuleSets': []
+                    }
+                },
+                'sourceConfigs': {
+                    'default': [
+                        {
+                            sourceFrom: 'sourceProperty',
+                            source: 'twitter.com',
+                            rule: { type: 'referrerDomain', value: 't.co' }
+                        }, {
+                            rule: { type: 'anyReferrerDomain', allowOwnHost: false }
+                        }
+                    ]
+                }
+            },
             'someOtherPlugin': builderConfig['someOtherPlugin'].makeDefault()
         }
     );
@@ -60,6 +152,10 @@ $(function() {
         var select = $('#plugin-selection-area select');
         var result = select.val();
         return ('string' === typeof result) ? result : null;
+    }
+
+    function getSelectedImpactLayout() {
+        return $('#config-area-impact select.layouts').val();
     }
 
     function getCustomerData() {
@@ -139,19 +235,6 @@ $(function() {
         select.change();
     }
 
-    function displaySelectedPluginConfiguration() {
-        console.log('selected plugin changed');
-        var pluginName = getSelectedPlugin();
-        if ('string' === typeof pluginName) {
-            switch (pluginName) {
-                case 'impactKpis4':
-                    displayConfigForImpact();
-                    break;
-            }
-            displayJSON();
-        }
-    }
-
     function displayJSON() {
         var pluginConfig = getSelectedPluginData();
         var textArea = $('#json-area textarea');
@@ -160,11 +243,6 @@ $(function() {
         textArea.text(text);
         textArea.prop('rows', lines.length);
         $('#json-area').show();
-    }
-
-    function displayConfigForImpact() {
-        var area = $('#config-area-impact');
-        area.show();
     }
 
     function addPlugin() {
@@ -213,10 +291,6 @@ $(function() {
         $("#config-area-impact .sites div.add-container").hide();
     }
 
-    function displaySelectedImpactSiteConfiguration() {
-        console.log('displaySelectedImpactSiteConfiguration');
-    }
-
     function addImpactLayout() {
         console.log('addImpactLayout');
         var container = $('#config-area-impact .layouts div.add-container');
@@ -259,5 +333,23 @@ $(function() {
             setCustomerData(getCurrentCustomerId(), data);
             select.change();
         }
+    }
+
+    function buildImpactCategoryPanel() {
+        var container = $(document.createElement('div'));
+        container.addClass('category section-container');
+        $(document.createElement('input'))
+            .addClass('category-name')
+            .prop('type', 'text')
+            .appendTo(container);
+        $(document.createElement('label'))
+            .text('Category Name')
+            .appendTo(container);
+
+        return container;
+    }
+
+    function updateImpactLayoutConfigArea() {
+
     }
 });
