@@ -129,7 +129,10 @@ $(function() {
         var pluginConfig = customerData[pluginName];
         //debugger;
         var textArea = $('#json-area textarea');
-        textArea.text(JSON.stringify(pluginConfig, null, 2));
+        var text = JSON.stringify(pluginConfig, null, 2);
+        var lines = text.split('\n');
+        textArea.text(text);
+        textArea.prop('rows', lines.length);
         $('#json-area').show();
     }
 
