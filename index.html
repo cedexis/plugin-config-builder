@@ -18,39 +18,41 @@
 <button id="lookup-customer">Lookup</button>
 </div>
 
-<div id="plugin-selection" style="display: none;">
-<p class="section-header">Plugins</p>
-<select></select>
-<button id="add-plugin">Add</button>
-<input type="text" id="add-plugin-input" style="display: none">
+<div id="plugin-selection-area" style="display: none;">
+    <p class="section-header">Plugins</p>
+    <select class="plugins"></select>
+    <button class="add">Add</button>
+    <div class="add-container" style="display: none">
+        <select class="plugins"></select>
+        <button class="confirm">Confirm</button>
+    </div>
 </div>
 
 <div id="config-area-impact" style="display: none">
-<p class="section-header">Impact Configuration</p>
+    <p class="section-header">Impact Configuration</p>
 
-<div class="section-container layouts">
-    <p class="header">Layouts</p>
-    <select class="layouts"></select>
-    <button class="add">Add</button>
-    <div class="add-container" style="display: none">
-        <input type="text"><button class="confirm">Confirm</button>
+    <div class="section-container layouts">
+        <p class="header">Layouts</p>
+        <select class="layouts"></select>
+        <button class="add">Add</button>
+        <div class="add-container" style="display: none">
+            <input type="text"><button class="confirm">Confirm</button>
+        </div>
     </div>
-</div>
 
-<div class="section-container sites">
-    <p class="header">Sites</p>
-    <select class="sites"></select>
-    <button class="add">Add</button>
-    <div class="add-container" style="display: none">
-        <input type="text"><button class="confirm">Confirm</button>
+    <div class="section-container sites">
+        <p class="header">Sites</p>
+        <select class="sites"></select>
+        <button class="add">Add</button>
+        <div class="add-container" style="display: none">
+            <input type="text"><button class="confirm">Confirm</button>
+        </div>
     </div>
-<div>
-
 </div>
 
 <div id="json-area" style="display: none;">
-<p class="section-header">JSON</p>
-<textarea disabled="disabled"></textarea>
+    <p class="section-header">JSON</p>
+    <textarea disabled="disabled"></textarea>
 </div>
 
 </div>

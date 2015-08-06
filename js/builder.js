@@ -1,7 +1,8 @@
 $(function() {
 
-    $('#plugin-selection select').change(displaySelectedPluginConfiguration);
-    $('#add-plugin').click(addPlugin);
+    $('#plugin-selection-area > select').change(displaySelectedPluginConfiguration);
+    $('#plugin-selection-area button.add').click(addPlugin);
+    $('#plugin-selection-area .add-container button.confirm').click(confirmAddPlugin);
     $('#config-area-impact .layouts button.add').click(addImpactLayout);
     $('#config-area-impact .layouts button.confirm').click(confirmAddImpactLayout);
     $('#config-area-impact .sites button.add').click(addImpactSite);
@@ -9,7 +10,35 @@ $(function() {
     $('#lookup-customer').click(displayPluginSelection);
     $('#config-area-impact select.sites').change(displaySelectedImpactSiteConfiguration);
 
-    addDemoData();
+    var builderConfig = {
+        'impactKpis4': {
+            makeDefault: function() {
+                return {
+                    debugging: true,
+                    sessionTimeout: 30,
+                    cookieTimeout: 7*24*60*60*1000,
+                    sites: {},
+                    layouts: {},
+                    sourceConfigs: {}
+                };
+            }
+        },
+        'someOtherPlugin': {
+            makeDefault: function() {
+                return {
+                    'foo': 'bar'
+                };
+            }
+        }
+    };
+
+    setCustomerData(
+        '10660',
+        {
+            'impactKpis4': builderConfig['impactKpis4'].makeDefault(),
+            'someOtherPlugin': builderConfig['someOtherPlugin'].makeDefault()
+        }
+    );
 
     /**
      * @return {string|null}
@@ -23,7 +52,7 @@ $(function() {
      * @return {string|null}
      */
     function getSelectedPlugin() {
-        var select = $('#plugin-selection select');
+        var select = $('#plugin-selection-area select');
         var result = select.val();
         return ('string' === typeof result) ? result : null;
     }
@@ -89,26 +118,9 @@ $(function() {
         }
     }
 
-    function addDemoData() {
-        setCustomerData(
-            '10660',
-            {
-                'impactKpis4': {
-                    debugging: true,
-                    sessionTimeout: 30,
-                    cookieTimeout: 7*24*60*60*1000,
-                    sites: {},
-                    layouts: {},
-                    sourceConfigs: {}
-                },
-                'someOtherPlugin': { 'foo': 'bar' }
-            }
-        );
-    }
-
     function displayPluginSelection() {
         var customerData = getCustomerData();
-        var select = $('#plugin-selection select');
+        var select = $('#plugin-selection-area select');
         //debugger;
         for (var pluginName in customerData) {
             if (customerData.hasOwnProperty(pluginName)) {
@@ -118,7 +130,7 @@ $(function() {
                     .appendTo(select);
             }
         }
-        $('#plugin-selection').show();
+        $('#plugin-selection-area').show();
         select.change();
     }
 
@@ -152,6 +164,19 @@ $(function() {
 
     function addPlugin() {
         console.log('addPlugin');
+        var container = $('#plugin-selection-area div.add-container');
+        var select = $('#plugin-selection-area .add-container select.plugins');
+        var customerData = getCustomerData();
+        var candidates = Object.keys(builderConfig).sort();
+        for (var i = 0; i < candidates.length; i++) {
+            var current = candidates[i];
+            if (!customerData[current]) {
+                var option = $(document.createElement('option'));
+                option.text(current).val(current);
+                select.append(option);
+            }
+        }
+        container.show();
     }
 
     function addImpactSite() {
@@ -210,5 +235,24 @@ $(function() {
             $('#config-area-impact select.layouts').append(option).val(value).change();
         }
         $("#config-area-impact .layouts div.add-container").hide();
+    }
+
+    function confirmAddPlugin() {
+        var pluginsContainer = $('#plugin-selection-area');
+        var addContainer = $('#plugin-selection-area .add-container');
+        var value = $('select', addContainer).val();
+        console.log(value);
+        addContainer.hide();
+        if (value && 'string' === typeof value) {
+            var select = $('> select', pluginsContainer);
+            console.log(select);
+            var option = $(document.createElement('option'));
+            option.text(value).val(value);
+            select.append(option).val(value);
+            var data = getCustomerData();
+            data[value] = builderConfig[value].makeDefault();
+            setCustomerData(getCurrentCustomerId(), data);
+            select.change();
+        }
     }
 });
