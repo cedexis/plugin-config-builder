@@ -34,8 +34,6 @@ $(function() {
 
     $('#config-area-impact button.category-rulesets.add').click(function() {
         console.log('Adding ruleset');
-        // var panel = buildImpactCategoryPanel();
-        // panel.insertBefore(this);
         var data = getSelectedPluginData();
         var layout = getSelectedImpactLayout();
         data['layouts'][layout]['categoryRuleSets'].push({
@@ -341,12 +339,14 @@ $(function() {
     var impactCategoryNameTypeChangedFunctions = {
         'category': {
             onChange: function() {
-                console.log('onChange category');
+                $(this).siblings('.hideable').hide();
+                $(this).siblings('.static-category').show();
             }
         },
         'categoryFromPathParts': {
             onChange: function() {
-                console.log('onChange categoryFromPathParts');
+                $(this).siblings('.hideable').hide();
+                $(this).siblings('.category-from-path-parts').show();
             }
         }
     };
@@ -355,13 +355,19 @@ $(function() {
      * @this {Element}
      */
     function impactCategoryNameTypeChanged() {
-        impactCategoryNameTypeChangedFunctions[$(this).val()].onChange();
+        impactCategoryNameTypeChangedFunctions[$(this).val()].onChange.call(this);
     }
 
-    function buildImpactCategoryPanel(config) {
+    /**
+     * @param {!Object} config
+     * @param {number} index
+     * @return {jQuery}
+     */
+    function buildImpactCategoryPanel(config, index) {
         console.log(config);
         var container = $(document.createElement('div'));
         container.addClass('category section-container');
+        container.data('index', index);
         var innerContainer = $(document.createElement('div'))
             .appendTo(container);
 
@@ -389,6 +395,28 @@ $(function() {
             .text('Name From Path')
             .appendTo(innerContainer);
 
+        var temp = appendElemTo('div', innerContainer, {
+            class: 'static-category hideable plugin-row',
+            css: {
+                display: 'none'
+            }
+        });
+
+        appendElemTo('input', temp);
+        appendElemTo('button', temp, {
+            text: 'Set',
+            click: setCategoryNameStatic
+        });
+
+        temp = appendElemTo('div', innerContainer, {
+            class: 'category-from-path-parts hideable plugin-row',
+            css: {
+                display: 'none'
+            }
+        });
+
+        appendElemTo('p', temp, { text: 'Category from path parts' });
+
         var radio = categoryRadio;
         if ('categoryFromPathParts' in config) {
             radio = categoryFromPathPartsRadio;
@@ -397,28 +425,22 @@ $(function() {
             radio.prop('checked', true).change();
         }
 
-        // $(document.createElement('input'))
-        //     .addClass('category-name')
-        //     .prop('type', 'text')
-        //     .appendTo(innerContainer);
-        // $(document.createElement('label'))
-        //     .text('Category Name')
-        //     .appendTo(innerContainer);
-        // innerContainer.appendTo(container);
-        //
-        // innerContainer = $(document.createElement('div'));
-        // $(document.createElement('input'))
-        //     .addClass('category-from-path-parts')
-        //     .prop('type', 'checkbox')
-        //     .appendTo(innerContainer);
-        // $(document.createElement('label'))
-        //     .text('Category From Path Parts')
-        //     .appendTo(innerContainer);
-        // innerContainer.appendTo(container);
-        //
-
-
         return container;
+    }
+
+    function setCategoryNameStatic() {
+        var value = $(this).siblings('input').val();
+        console.log(value);
+        var outerParent = $(this).parents('div')[2];
+        var index = $(outerParent).data('index');
+        console.log('Rule set index: ' + index);
+        var pluginData = getSelectedPluginData();
+        var layout = getSelectedImpactLayout();
+        var layoutConfig = pluginData['layouts'][layout];
+        var ruleSet = layoutConfig['categoryRuleSets'][index];
+        ruleSet['category'] = value;
+        debugger;
+        setSelectedPluginData(pluginData);
     }
 
     function updateImpactLayoutConfigArea() {
@@ -434,7 +456,7 @@ $(function() {
         container.empty();
         for (i = 0; i < layoutConfig['categoryRuleSets'].length; i++) {
             current = layoutConfig['categoryRuleSets'][i];
-            container.append(buildImpactCategoryPanel(current));
+            container.append(buildImpactCategoryPanel(current, i));
         }
     }
 

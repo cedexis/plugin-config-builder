@@ -37,8 +37,8 @@ function appendElemTo(tagName, parent, options) {
         if (options.text) {
             tag.text(options.text);
         }
-        if (options.classes) {
-            tag.addClass(options.classes);
+        if (options.class) {
+            tag.addClass(options.class);
         }
         if (options.props) {
             for (i in options.props) {

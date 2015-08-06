@@ -33,7 +33,7 @@ $(function() {
                                 item.data('customerId', i);
                                 item.data('pluginName', j);
                                 item.addClass('plugin-row');
-                                var span = appendElemTo('span', item, { text: i + ' - ' + j, classes: 'plugin-label' });
+                                var span = appendElemTo('span', item, { text: i + ' - ' + j, class: 'plugin-label' });
                                 span = appendElemTo('span', item);
                                 appendElemTo('a', span, {
                                         text: 'goto',
@@ -47,7 +47,7 @@ $(function() {
                                     });
                                 var areYouSureContainer = appendElemTo('span', item, {
                                         text: 'Are you sure?',
-                                        classes: 'are-you-sure-container',
+                                        class: 'are-you-sure-container',
                                         css: {
                                             display: 'none'
                                         }
