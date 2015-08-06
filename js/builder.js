@@ -337,16 +337,85 @@ $(function() {
         }
     }
 
+    var impactCategoryNameTypeChangedFunctions = {
+        'category': {
+            onChange: function() {
+                console.log('onChange category');
+            }
+        },
+        'categoryFromPathParts': {
+            onChange: function() {
+                console.log('onChange categoryFromPathParts');
+            }
+        }
+    };
+
+    /**
+     * @this {Element}
+     */
+    function impactCategoryNameTypeChanged() {
+        impactCategoryNameTypeChangedFunctions[$(this).val()].onChange();
+    }
+
     function buildImpactCategoryPanel(config) {
+        console.log(config);
         var container = $(document.createElement('div'));
         container.addClass('category section-container');
-        $(document.createElement('input'))
-            .addClass('category-name')
-            .prop('type', 'text')
+        var innerContainer = $(document.createElement('div'))
             .appendTo(container);
+
+        var categoryRadio = $(document.createElement('input'))
+            .prop('type', 'radio')
+            .prop('name', 'category-name')
+            .val('category')
+            .change(impactCategoryNameTypeChanged)
+            .appendTo(innerContainer);
+
         $(document.createElement('label'))
-            .text('Category Name')
-            .appendTo(container);
+            .addClass('radio')
+            .text('Static')
+            .appendTo(innerContainer);
+
+        var categoryFromPathPartsRadio = $(document.createElement('input'))
+            .prop('type', 'radio')
+            .prop('name', 'category-name')
+            .val('categoryFromPathParts')
+            .change(impactCategoryNameTypeChanged)
+            .appendTo(innerContainer);
+
+        $(document.createElement('label'))
+            .addClass('radio')
+            .text('Name From Path')
+            .appendTo(innerContainer);
+
+        var radio = categoryRadio;
+        if ('categoryFromPathParts' in config) {
+            radio = categoryFromPathPartsRadio;
+        }
+        if (radio) {
+            radio.prop('checked', true).change();
+        }
+
+        // $(document.createElement('input'))
+        //     .addClass('category-name')
+        //     .prop('type', 'text')
+        //     .appendTo(innerContainer);
+        // $(document.createElement('label'))
+        //     .text('Category Name')
+        //     .appendTo(innerContainer);
+        // innerContainer.appendTo(container);
+        //
+        // innerContainer = $(document.createElement('div'));
+        // $(document.createElement('input'))
+        //     .addClass('category-from-path-parts')
+        //     .prop('type', 'checkbox')
+        //     .appendTo(innerContainer);
+        // $(document.createElement('label'))
+        //     .text('Category From Path Parts')
+        //     .appendTo(innerContainer);
+        // innerContainer.appendTo(container);
+        //
+
 
         return container;
     }
@@ -354,10 +423,10 @@ $(function() {
     function updateImpactLayoutConfigArea() {
         console.log('updateImpactLayoutConfigArea');
         var pluginData = getSelectedPluginData();
-        console.log(pluginData);
+        //console.log(pluginData);
         var layout = getSelectedImpactLayout();
         var layoutConfig = pluginData['layouts'][layout];
-        console.log(layoutConfig);
+        //console.log(layoutConfig);
         var i;
         var current;
         var container = $('.category-rulesets .container');

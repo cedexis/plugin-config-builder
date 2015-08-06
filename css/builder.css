@@ -52,6 +52,14 @@ hr {
     border: 1px solid gainsboro;
 }
 
+input[type="radio"] {
+    margin-right: 0.5em;
+}
+
+label.radio {
+    margin-right: 1.2em;
+}
+
 p {
     line-height: 1.7;
 }
