@@ -21,11 +21,18 @@
 <div id="plugin-selection" style="display: none;">
 <p>Plugins</p>
 <select></select>
-<button>Add</button>
+<button id="add-plugin">Add</button>
+<input type="text" id="add-plugin-input" style="display: none">
 </div>
 
 <div id="config-area-impact" style="display: none">
 <p>Impact Configuration</p>
+<p class="header">Sites</p>
+<select id="sites"></select>
+<button class="add-site">Add</button>
+<div class="add-site-container" style="display: none">
+<input type="text"><button class="confirm">Confirm</button>
+</div>
 </div>
 
 <div id="json-area" style="display: none;">

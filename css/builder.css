@@ -23,3 +23,12 @@ body {
 #json-area textarea {
     width: 100%;
 }
+
+.header {
+    font-size: 80%;
+    font-weight: bold;
+}
+
+p {
+    line-height: 1.7;
+}

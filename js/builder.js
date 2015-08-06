@@ -1,21 +1,34 @@
 $(function() {
 
     $('#plugin-selection select').change(displaySelectedPluginConfiguration);
-
-    $('#lookup-customer').click(function() {
-        var customerId = $("#customer-id").val();
-        console.log('customer id: ' + customerId);
-        var customerData = getCustomerData(customerId);
-        console.log(customerData);
-
-        displayPluginSelection(customerData);
-    });
+    $('#add-plugin').click(addPlugin);
+    $('#config-area-impact button.add-site').click(addImpactSite);
+    $('#config-area-impact button.confirm').click(confirmAddImpactSite);
+    $('#lookup-customer').click(displayPluginSelection);
 
     addDemoData();
 
-    function getCustomerData(customerId) {
+    /**
+     * @return {string|null}
+     */
+    function getCurrentCustomerId() {
+        var result = $("#customer-id").val();
+        return ('string' === typeof result) ? result : null;
+    }
+
+    /**
+     * @return {string|null}
+     */
+    function getSelectedPlugin() {
+        var select = $('#plugin-selection select');
+        var result = select.val();
+        return ('string' === typeof result) ? result : null;
+    }
+
+    function getCustomerData() {
         if (window['localStorage']) {
             var storage = window['localStorage'];
+            var customerId = getCurrentCustomerId();
             var customerData = storage.getItem('customerData');
             console.log(customerData);
             if (!customerData) {
@@ -33,6 +46,21 @@ $(function() {
             return customerData[customerId];
         }
         return null;
+    }
+
+    function getSelectedPluginData() {
+        var pluginName = getSelectedPlugin();
+        var customerData = getCustomerData();
+        return customerData[pluginName];
+    }
+
+    function setSelectedPluginData(data) {
+        var customerId = getCurrentCustomerId();
+        var pluginName = getSelectedPlugin();
+        var customerData = getCustomerData();
+        customerData[pluginName] = data;
+        setCustomerData(customerId, customerData);
+        displayJSON();
     }
 
     function setCustomerData(customerId, data) {
@@ -58,39 +86,25 @@ $(function() {
         }
     }
 
-    function setCustomerPluginData(customerId, pluginName, data) {
-        if (window['localStorage']) {
-            var storage = window['localStorage'];
-            var customerData = storage.getItem('customerData');
-            if (customerData) {
-                customerData = JSON.parse(customerData);
-            } else {
-                customerData = {};
-            }
-            customerData[customerId] = customerData[customerId] || {};
-            if (data) {
-                customerData[customerId][pluginName] = data;
-            } else {
-                delete customerData[customerId][pluginName];
-            }
-            storage.setItem('customerData', JSON.stringify(customerData));
-        }
-    }
-
     function addDemoData() {
-        setCustomerData('10660', null);
-        setCustomerPluginData('10660', 'impactKpis4', {
-            debugging: true,
-            sessionTimeout: 30,
-            cookieTimeout: 7*24*60*60*1000,
-            sites: {},
-            layouts: {},
-            sourceConfigs: {}
-        });
-        setCustomerPluginData('10660', 'someOtherPlugin', { 'foo': 'bar' });
+        setCustomerData(
+            '10660',
+            {
+                'impactKpis4': {
+                    debugging: true,
+                    sessionTimeout: 30,
+                    cookieTimeout: 7*24*60*60*1000,
+                    sites: {},
+                    layouts: {},
+                    sourceConfigs: {}
+                },
+                'someOtherPlugin': { 'foo': 'bar' }
+            }
+        );
     }
 
-    function displayPluginSelection(customerData) {
+    function displayPluginSelection() {
+        var customerData = getCustomerData();
         var select = $('#plugin-selection select');
         //debugger;
         for (var pluginName in customerData) {
@@ -107,27 +121,19 @@ $(function() {
 
     function displaySelectedPluginConfiguration() {
         console.log('selected plugin changed');
-        var select = $('#plugin-selection select');
-        console.log(select.val());
-        var pluginName = select.val();
+        var pluginName = getSelectedPlugin();
         if ('string' === typeof pluginName) {
             switch (pluginName) {
                 case 'impactKpis4':
                     displayConfigForImpact();
                     break;
             }
-            displayJSON(pluginName);
+            displayJSON();
         }
     }
 
-    /**
-     * @param {string} pluginName
-     */
-    function displayJSON(pluginName) {
-        var customerId = $("#customer-id").val();
-        var customerData = getCustomerData(customerId);
-        var pluginConfig = customerData[pluginName];
-        //debugger;
+    function displayJSON() {
+        var pluginConfig = getSelectedPluginData();
         var textArea = $('#json-area textarea');
         var text = JSON.stringify(pluginConfig, null, 2);
         var lines = text.split('\n');
@@ -139,5 +145,34 @@ $(function() {
     function displayConfigForImpact() {
         var area = $('#config-area-impact');
         area.show();
+    }
+
+    function addPlugin() {
+        console.log('addPlugin');
+    }
+
+    function addImpactSite() {
+        console.log('addImpactSite');
+        var container = $('#config-area-impact .add-site-container');
+        container.show();
+    }
+
+    function confirmAddImpactSite() {
+        console.log('confirmAddImpactSite');
+        var input = $("#config-area-impact .add-site-container input");
+        var value = input.val();
+        if (value) {
+            var data = getSelectedPluginData();
+            data['sites'][value] = {
+                'layout': 'default',
+                'sourceConfig': null,
+                'cookie': {
+                    'domain': null
+                },
+                'enableMetadataReporting': false
+            };
+            setSelectedPluginData(data);
+        }
+        $("#config-area-impact .add-site-container").hide();
     }
 });
