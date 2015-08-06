@@ -79,7 +79,14 @@ $(function() {
 
     function addDemoData() {
         setCustomerData('10660', null);
-        setCustomerPluginData('10660', 'impactKpis4', {});
+        setCustomerPluginData('10660', 'impactKpis4', {
+            debugging: true,
+            sessionTimeout: 30,
+            cookieTimeout: 7*24*60*60*1000,
+            sites: {},
+            layouts: {},
+            sourceConfigs: {}
+        });
         setCustomerPluginData('10660', 'someOtherPlugin', { 'foo': 'bar' });
     }
 
@@ -102,21 +109,31 @@ $(function() {
         console.log('selected plugin changed');
         var select = $('#plugin-selection select');
         console.log(select.val());
-
-        switch (select.val()) {
-            case 'impactKpis4':
-                break;
-            default:
-                displayJSON();
-                break;
+        var pluginName = select.val();
+        if ('string' === typeof pluginName) {
+            switch (pluginName) {
+                case 'impactKpis4':
+                    displayConfigForImpact();
+                    break;
+            }
+            displayJSON(pluginName);
         }
     }
 
-    function displayJSON() {
-        $('#json-area').show();
-
+    /**
+     * @param {string} pluginName
+     */
+    function displayJSON(pluginName) {
+        var customerId = $("#customer-id").val();
+        var customerData = getCustomerData(customerId);
+        var pluginConfig = customerData[pluginName];
+        //debugger;
         var textArea = $('#json-area textarea');
-        textArea.text('blah');
+        textArea.text(JSON.stringify(pluginConfig, null, 2));
+        $('#json-area').show();
+    }
+
+    function displayConfigForImpact() {
 
     }
 });
