@@ -8,6 +8,8 @@ $(function() {
     $('#config-area-impact button.sites.confirm').click(confirmAddImpactSite);
     $('#lookup-customer').click(displayPluginSelection);
 
+    $('#text-area-edit').click(onTextAreaEditButtonClick);
+
     $('#plugin-selection-area > select').change(function() {
         console.log('selected plugin changed');
         var pluginName = getSelectedPlugin();
@@ -40,7 +42,6 @@ $(function() {
             'rules': []
         });
         setSelectedPluginData(data);
-        updateImpactLayoutConfigArea();
     });
 
     var builderConfig = {
@@ -213,6 +214,7 @@ $(function() {
         var customerData = getCustomerData();
         customerData[pluginName] = data;
         setCustomerData(customerId, customerData);
+        updateImpactLayoutConfigArea();
         displayJSON();
     }
 
@@ -439,7 +441,6 @@ $(function() {
         var layoutConfig = pluginData['layouts'][layout];
         var ruleSet = layoutConfig['categoryRuleSets'][index];
         ruleSet['category'] = value;
-        debugger;
         setSelectedPluginData(pluginData);
     }
 
@@ -462,5 +463,25 @@ $(function() {
 
     function updateImpactSiteConfigArea() {
         console.log('updateImpactSiteConfigArea');
+    }
+
+    function onTextAreaEditButtonClick() {
+        // Toggle the disabled state of the text area and button text
+        var textArea = $('#json-area textarea');
+        var state = textArea.prop('disabled');
+        var button = $(this);
+        var disabled, buttonText;
+        if (state) {
+            disabled = false;
+            buttonText = 'Save';
+        } else {
+            disabled = true;
+            buttonText = 'Edit';
+            var newData = JSON.parse(textArea.val());
+            debugger;
+            setSelectedPluginData(newData);
+        }
+        textArea.prop('disabled', disabled);
+        button.text(buttonText);
     }
 });
