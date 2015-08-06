@@ -16,6 +16,8 @@ body {
     height: 100vh;
     width: 800px;
     margin: 0px auto;
+    border-left: 1px solid dimgray;
+    border-right: 1px solid dimgray;
 }
 
 #json-area textarea {
