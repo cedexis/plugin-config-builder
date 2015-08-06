@@ -33,6 +33,7 @@ hr {
 
 #json-area textarea {
     width: 100%;
+    padding: 1em;
 }
 
 .header {
@@ -56,6 +57,10 @@ hr {
     border: 1px solid gainsboro;
 }
 
+input[type="text"], button {
+    padding: 0.2em;
+}
+
 input[type="radio"] {
     margin-right: 0.5em;
 }
@@ -76,6 +81,7 @@ ul {
 li {
     list-style-type: none;
     font-size: 90%;
+    margin: 0.2em 0;
 }
 
 .plugin-label {
@@ -83,9 +89,10 @@ li {
     width: 260px;
 }
 
-.plugin-row-link {
+.plugin-row span, .plugin-row button {
     display: inline-block;
     padding: 0 12px;
+    margin-left: 12px;
 }
 
 #customer-plugins-area .panel button {

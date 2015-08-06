@@ -21,3 +21,43 @@ function setCustomerData(customerId, data) {
         }
     }
 }
+
+/**
+ * @param {string} tagName
+ * @param {jQuery} parent
+ * @param {Object=} options
+ * @return {jQuery}
+ */
+function appendElemTo(tagName, parent, options) {
+    var i;
+    var tag = $(document.createElement(tagName));
+    tag.appendTo(parent);
+
+    if (options) {
+        if (options.text) {
+            tag.text(options.text);
+        }
+        if (options.classes) {
+            tag.addClass(options.classes);
+        }
+        if (options.props) {
+            for (i in options.props) {
+                if (options.props.hasOwnProperty(i)) {
+                    tag.prop(i, options.props[i]);
+                }
+            }
+        }
+        if (options.css) {
+            for (i in options.css) {
+                if (options.css.hasOwnProperty(i)) {
+                    tag.css(i, options.css[i]);
+                }
+            }
+        }
+        if (options.click) {
+            tag.click(options.click);
+        }
+    }
+
+    return tag;
+}

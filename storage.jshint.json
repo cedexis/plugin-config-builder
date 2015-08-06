@@ -1,9 +1,0 @@
-{
-    "undef": true,
-    "unused": true,
-    "laxbreak": true,
-    "sub": true,
-    "browser": true,
-    "devel": true,
-    "predef": [ "$", "setCustomerData" ]
-}

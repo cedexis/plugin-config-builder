@@ -2,38 +2,6 @@ $(function() {
 
     loadPageData();
 
-    /**
-     * @param {string} tagName
-     * @param {jQuery} parent
-     * @param {Object=} options
-     * @return {jQuery}
-     */
-    function appendElemTo(tagName, parent, options) {
-        var tag = $(document.createElement(tagName));
-        tag.appendTo(parent);
-
-        if (options) {
-            if (options.text) {
-                tag.text(options.text);
-            }
-            if (options.classes) {
-                tag.addClass(options.classes);
-            }
-            if (options.props) {
-                for (var i in options.props) {
-                    if (options.props.hasOwnProperty(i)) {
-                        tag.prop(i, options.props[i]);
-                    }
-                }
-            }
-            if (options.click) {
-                tag.click(options.click);
-            }
-        }
-
-        return tag;
-    }
-
     function deletePluginFromStorage(customerId, pluginName) {
         //debugger;
         var storage = window['localStorage'];
@@ -64,19 +32,33 @@ $(function() {
                                 var item = $(document.createElement('li'));
                                 item.data('customerId', i);
                                 item.data('pluginName', j);
+                                item.addClass('plugin-row');
                                 var span = appendElemTo('span', item, { text: i + ' - ' + j, classes: 'plugin-label' });
-                                span = appendElemTo('span', item, { classes: 'plugin-row-link' });
-                                appendElemTo('a', span,
-                                    {
+                                span = appendElemTo('span', item);
+                                appendElemTo('a', span, {
                                         text: 'goto',
                                         props: {
                                             href: '/plugin-config-builder/?customerId=' + i + '&' + 'pluginName=' + j
                                         }
                                     });
-                                appendElemTo('button', item,
-                                    {
+                                appendElemTo('button', item, {
                                         text: 'delete',
                                         click: onDeleteButtonClick
+                                    });
+                                var areYouSureContainer = appendElemTo('span', item, {
+                                        text: 'Are you sure?',
+                                        classes: 'are-you-sure-container',
+                                        css: {
+                                            display: 'none'
+                                        }
+                                    });
+                                appendElemTo('button', areYouSureContainer, {
+                                        text: 'Yes',
+                                        click: onDeleteSureYesClick
+                                    });
+                                appendElemTo('button', areYouSureContainer, {
+                                        text: 'No',
+                                        click: onDeleteSureNoClick
                                     });
 
                                 item.appendTo(list);
@@ -89,9 +71,18 @@ $(function() {
 
         function onDeleteButtonClick() {
             var parent = $(this).parent();
+            $('.are-you-sure-container', parent).show();
+        }
+
+        function onDeleteSureYesClick() {
+            var parent = $(this).parent().parent();
             var customerId = parent.data('customerId');
             var pluginName = parent.data('pluginName');
             deletePluginFromStorage(customerId, pluginName);
+        }
+
+        function onDeleteSureNoClick() {
+            $(this).parent().hide();
         }
     }
 

@@ -5,5 +5,9 @@
     "sub": true,
     "browser": true,
     "devel": true,
-    "predef": [ "$", "setCustomerData" ]
+    "predef": [
+        "$",
+        "setCustomerData",
+        "appendElemTo"
+    ]
 }

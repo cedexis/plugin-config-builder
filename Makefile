@@ -21,5 +21,5 @@ validate-javascript:
 	--warning_level VERBOSE
 
 	$(JSHINT) --config common.jshint.json js/common.js
-	$(JSHINT) --config builder.jshint.json js/builder.js
-	$(JSHINT) --config storage.jshint.json js/storage.js
+	$(JSHINT) --config jshint.json js/builder.js
+	$(JSHINT) --config jshint.json js/storage.js

@@ -11,10 +11,13 @@ $(function() {
     $('#plugin-selection-area > select').change(function() {
         console.log('selected plugin changed');
         var pluginName = getSelectedPlugin();
-        if ('string' === typeof pluginName) {
+        if ('string' === typeof pluginName
+            && pluginName in builderConfig) {
             builderConfig[pluginName].displayConfig();
-            displayJSON();
+        } else {
+            $('#config-area-impact').hide();
         }
+        displayJSON();
     });
 
     $('#config-area-impact select.layouts').change(function() {
@@ -60,7 +63,6 @@ $(function() {
                 };
             },
             displayConfig: function() {
-                //debugger;
                 var area = $('#config-area-impact');
                 var pluginConfig = getSelectedPluginData();
                 var i;
@@ -139,6 +141,20 @@ $(function() {
         }
     );
 
+    (function() {
+        var match = /customerid=(\d+)/i.exec(window.location.search);
+        console.log(match);
+        if (match && match[1]) {
+            $("#customer-id").val(match[1]);
+            match = /pluginname=(\w+)/i.exec(window.location.search);
+            if (match && match[1]) {
+                setSelectedPlugin(match[1]);
+            } else {
+                displayPluginSelection();
+            }
+        }
+    }());
+
     /**
      * @return {string|null}
      */
@@ -154,6 +170,10 @@ $(function() {
         var select = $('#plugin-selection-area select');
         var result = select.val();
         return ('string' === typeof result) ? result : null;
+    }
+
+    function setSelectedPlugin(pluginName) {
+        $('#plugin-selection-area select').val(pluginName).change();
     }
 
     function getSelectedImpactLayout() {
@@ -201,7 +221,6 @@ $(function() {
     function displayPluginSelection() {
         var customerData = getCustomerData();
         var select = $('#plugin-selection-area select');
-        //debugger;
         for (var pluginName in customerData) {
             if (customerData.hasOwnProperty(pluginName)) {
                 $(document.createElement('option'))
@@ -217,7 +236,12 @@ $(function() {
     function displayJSON() {
         var pluginConfig = getSelectedPluginData();
         var textArea = $('#json-area textarea');
-        var text = JSON.stringify(pluginConfig, null, 2);
+        var text;
+        if (pluginConfig) {
+            text = JSON.stringify(pluginConfig, null, 2);
+        } else {
+            text = 'Missing plugin configuration';
+        }
         var lines = text.split('\n');
         textArea.text(text);
         textArea.prop('rows', lines.length);
