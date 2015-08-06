@@ -20,6 +20,8 @@ $(function() {
     $('#config-area-impact select.layouts').change(function() {
         console.log('layout changed');
         var container = $('#config-area-impact div.config-area');
+        updateImpactLayoutConfigArea();
+        updateImpactSiteConfigArea();
         container.show();
     });
 
@@ -335,7 +337,7 @@ $(function() {
         }
     }
 
-    function buildImpactCategoryPanel() {
+    function buildImpactCategoryPanel(config) {
         var container = $(document.createElement('div'));
         container.addClass('category section-container');
         $(document.createElement('input'))
@@ -350,6 +352,23 @@ $(function() {
     }
 
     function updateImpactLayoutConfigArea() {
+        console.log('updateImpactLayoutConfigArea');
+        var pluginData = getSelectedPluginData();
+        console.log(pluginData);
+        var layout = getSelectedImpactLayout();
+        var layoutConfig = pluginData['layouts'][layout];
+        console.log(layoutConfig);
+        var i;
+        var current;
+        var container = $('.category-rulesets .container');
+        container.empty();
+        for (i = 0; i < layoutConfig['categoryRuleSets'].length; i++) {
+            current = layoutConfig['categoryRuleSets'][i];
+            container.append(buildImpactCategoryPanel(current));
+        }
+    }
 
+    function updateImpactSiteConfigArea() {
+        console.log('updateImpactSiteConfigArea');
     }
 });
