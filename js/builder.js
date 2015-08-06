@@ -2,9 +2,12 @@ $(function() {
 
     $('#plugin-selection select').change(displaySelectedPluginConfiguration);
     $('#add-plugin').click(addPlugin);
-    $('#config-area-impact button.add-site').click(addImpactSite);
-    $('#config-area-impact button.confirm').click(confirmAddImpactSite);
+    $('#config-area-impact .layouts button.add').click(addImpactLayout);
+    $('#config-area-impact .layouts button.confirm').click(confirmAddImpactLayout);
+    $('#config-area-impact .sites button.add').click(addImpactSite);
+    $('#config-area-impact .sites button.confirm').click(confirmAddImpactSite);
     $('#lookup-customer').click(displayPluginSelection);
+    $('#config-area-impact select.sites').change(displaySelectedImpactSiteConfiguration);
 
     addDemoData();
 
@@ -153,15 +156,15 @@ $(function() {
 
     function addImpactSite() {
         console.log('addImpactSite');
-        var container = $('#config-area-impact .add-site-container');
+        var container = $('#config-area-impact .sites div.add-container');
         container.show();
     }
 
     function confirmAddImpactSite() {
         console.log('confirmAddImpactSite');
-        var input = $("#config-area-impact .add-site-container input");
+        var input = $("#config-area-impact .sites div.add-container input");
         var value = input.val();
-        if (value) {
+        if (value && 'string' === typeof value) {
             var data = getSelectedPluginData();
             data['sites'][value] = {
                 'layout': 'default',
@@ -172,7 +175,40 @@ $(function() {
                 'enableMetadataReporting': false
             };
             setSelectedPluginData(data);
+
+            var option = $(document.createElement('option'));
+            option.text(value).val(value);
+            $('#config-area-impact select.sites').append(option).val(value).change();
         }
-        $("#config-area-impact .add-site-container").hide();
+        $("#config-area-impact .sites div.add-container").hide();
+    }
+
+    function displaySelectedImpactSiteConfiguration() {
+        console.log('displaySelectedImpactSiteConfiguration');
+    }
+
+    function addImpactLayout() {
+        console.log('addImpactLayout');
+        var container = $('#config-area-impact .layouts div.add-container');
+        container.show();
+    }
+
+    function confirmAddImpactLayout() {
+        console.log('confirmAddImpactLayout');
+        var input = $("#config-area-impact .layouts div.add-container input");
+        var value = input.val();
+        if (value && 'string' === typeof value) {
+            var data = getSelectedPluginData();
+            data['layouts'][value] = {
+                kpi: [],
+                categoryRuleSets: []
+            };
+            setSelectedPluginData(data);
+
+            var option = $(document.createElement('option'));
+            option.text(value).val(value);
+            $('#config-area-impact select.layouts').append(option).val(value).change();
+        }
+        $("#config-area-impact .layouts div.add-container").hide();
     }
 });

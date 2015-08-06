@@ -13,30 +13,43 @@
 <div class="wrapper">
 
 <div>
-<p>Customer ID</p>
+<p class="section-header">Customer ID</p>
 <input type="text" id="customer-id">
 <button id="lookup-customer">Lookup</button>
 </div>
 
 <div id="plugin-selection" style="display: none;">
-<p>Plugins</p>
+<p class="section-header">Plugins</p>
 <select></select>
 <button id="add-plugin">Add</button>
 <input type="text" id="add-plugin-input" style="display: none">
 </div>
 
 <div id="config-area-impact" style="display: none">
-<p>Impact Configuration</p>
-<p class="header">Sites</p>
-<select id="sites"></select>
-<button class="add-site">Add</button>
-<div class="add-site-container" style="display: none">
-<input type="text"><button class="confirm">Confirm</button>
+<p class="section-header">Impact Configuration</p>
+
+<div class="section-container layouts">
+    <p class="header">Layouts</p>
+    <select class="layouts"></select>
+    <button class="add">Add</button>
+    <div class="add-container" style="display: none">
+        <input type="text"><button class="confirm">Confirm</button>
+    </div>
 </div>
+
+<div class="section-container sites">
+    <p class="header">Sites</p>
+    <select class="sites"></select>
+    <button class="add">Add</button>
+    <div class="add-container" style="display: none">
+        <input type="text"><button class="confirm">Confirm</button>
+    </div>
+<div>
+
 </div>
 
 <div id="json-area" style="display: none;">
-<p>JSON</p>
+<p class="section-header">JSON</p>
 <textarea disabled="disabled"></textarea>
 </div>
 
