@@ -14,12 +14,17 @@ $(function() {
         'impactKpis4': {
             makeDefault: function() {
                 return {
-                    debugging: true,
-                    sessionTimeout: 30,
-                    cookieTimeout: 7*24*60*60*1000,
-                    sites: {},
-                    layouts: {},
-                    sourceConfigs: {}
+                    'debugging': true,
+                    'sessionTimeout': 30,
+                    'cookieTimeout': 7*24*60*60*1000,
+                    'sites': {},
+                    'layouts': {
+                        'default': {
+                            'kpi': [],
+                            'categoryRuleSets': []
+                        }
+                    },
+                    'sourceConfigs': {}
                 };
             }
         },
@@ -225,8 +230,8 @@ $(function() {
         if (value && 'string' === typeof value) {
             var data = getSelectedPluginData();
             data['layouts'][value] = {
-                kpi: [],
-                categoryRuleSets: []
+                'kpi': [],
+                'categoryRuleSets': []
             };
             setSelectedPluginData(data);
 
