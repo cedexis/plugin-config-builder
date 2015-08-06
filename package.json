@@ -1,0 +1,6 @@
+{
+    "devDependencies": {
+        "jshint": "2.5.x",
+        "google-closure-compiler": ">=20150609.0.0"
+    }
+}
