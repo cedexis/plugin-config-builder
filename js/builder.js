@@ -93,10 +93,10 @@ $(function() {
                 return {
                     'foo': 'bar'
                 };
+            },
+            displayConfig: function() {
+                console.log('Not implemented');
             }
-        },
-        displayConfig: function() {
-            console.log('Not implemented');
         }
     };
 
@@ -164,12 +164,12 @@ $(function() {
         if (window['localStorage']) {
             var storage = window['localStorage'];
             var customerId = getCurrentCustomerId();
-            var customerData = storage.getItem('customerData');
+            var customerData = storage.getItem('plugin-config-builder.customerData');
             console.log(customerData);
             if (!customerData) {
                 customerData = {};
                 customerData[customerId] = {};
-                storage.setItem('customerData', JSON.stringify(customerData));
+                storage.setItem('plugin-config-builder.customerData', JSON.stringify(customerData));
                 return customerData[customerId];
             }
             customerData = JSON.parse(customerData);
@@ -177,7 +177,7 @@ $(function() {
                 return customerData[customerId];
             }
             customerData[customerId] = {};
-            storage.setItem('customerData', JSON.stringify(customerData));
+            storage.setItem('plugin-config-builder.customerData', JSON.stringify(customerData));
             return customerData[customerId];
         }
         return null;
@@ -196,29 +196,6 @@ $(function() {
         customerData[pluginName] = data;
         setCustomerData(customerId, customerData);
         displayJSON();
-    }
-
-    function setCustomerData(customerId, data) {
-        //debugger;
-        if (window['localStorage']) {
-            var storage = window['localStorage'];
-            var customerData = storage.getItem('customerData');
-            if (customerData) {
-                customerData = JSON.parse(customerData);
-                if (data && customerData[customerId]) {
-                    customerData[customerId] = data;
-                } else if (customerData[customerId]) {
-                    delete customerData[customerId];
-                }
-                storage.setItem('customerData', JSON.stringify(customerData));
-            } else {
-                customerData = {};
-                if (data) {
-                    customerData[customerId] = data;
-                    storage.setItem('customerData', JSON.stringify(customerData));
-                }
-            }
-        }
     }
 
     function displayPluginSelection() {
