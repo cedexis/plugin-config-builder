@@ -137,6 +137,7 @@ $(function() {
     }
 
     function displayConfigForImpact() {
-
+        var area = $('#config-area-impact');
+        area.show();
     }
 });
