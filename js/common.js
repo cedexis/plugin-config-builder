@@ -1,4 +1,13 @@
 
+$(function() {
+    $('#messages-container .clear-all').click(function() {
+        $.when($('#messages-container').fadeOut())
+            .done(function() {
+                $('#messages-container div.message').remove();
+            });
+    });
+});
+
 function setCustomerData(customerId, data) {
     //debugger;
     if (window['localStorage']) {
@@ -24,15 +33,12 @@ function setCustomerData(customerId, data) {
 
 /**
  * @param {string} tagName
- * @param {jQuery} parent
  * @param {Object=} options
  * @return {jQuery}
  */
-function appendElemTo(tagName, parent, options) {
+function createTag(tagName, options) {
     var i;
     var tag = $(document.createElement(tagName));
-    tag.appendTo(parent);
-
     if (options) {
         if (options.text) {
             tag.text(options.text);
@@ -58,6 +64,66 @@ function appendElemTo(tagName, parent, options) {
             tag.click(options.click);
         }
     }
-
     return tag;
+}
+
+/**
+ * @param {string} tagName
+ * @param {jQuery} parent
+ * @param {Object=} options
+ * @return {jQuery}
+ */
+function appendElemTo(tagName, parent, options) {
+    var tag = createTag(tagName, options);
+    tag.appendTo(parent);
+    return tag;
+}
+
+/**
+ * @param {string} tagName
+ * @param {jQuery} parent
+ * @param {number} index
+ * @param {Object=} options
+ * @return {jQuery}
+ */
+function insertElemInto(tagName, parent, index, options) {
+    var tag = createTag(tagName, options);
+    if (0 === index) {
+        parent.prepend(tag);
+    } else {
+        parent.children().eq(index - 1).after(tag);
+    }
+    return tag;
+}
+
+function displayMessage(level, message) {
+    var messages = $("#messages-container");
+    var levelClassPart = '';
+    switch (level) {
+        case 'info':
+        case 'warning':
+        case 'error':
+            levelClassPart = ' ' + level;
+            break;
+    }
+    var messageContainer = insertElemInto('div', messages, 0, {
+        class: 'message' + levelClassPart
+    });
+    if ('string' === typeof message) {
+        appendElemTo('p', messageContainer, {
+            text: message
+        });
+    } else if ('length' in message) {
+        for (var i = 0; i < message.length; i++) {
+            var current = message[i];
+            if (0 < current.length) {
+                appendElemTo('p', messageContainer, {
+                    text: current
+                });
+            } else {
+                appendElemTo('hr', messageContainer);
+            }
+        }
+    }
+    messages.fadeIn();
 }

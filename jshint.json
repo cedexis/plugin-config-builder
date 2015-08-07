@@ -8,6 +8,7 @@
     "predef": [
         "$",
         "setCustomerData",
-        "appendElemTo"
+        "appendElemTo",
+        "displayMessage"
     ]
 }

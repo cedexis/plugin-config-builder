@@ -99,3 +99,31 @@ li {
     display: inline-block;
     padding: 0 12px;
 }
+
+#messages-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+#messages-container > div {
+    margin: 6px;
+    padding: 6px;
+}
+
+#messages-container p {
+    font-size: 80%;
+    line-height: 1.2;
+}
+
+#messages-container hr {
+    visibility: hidden;
+    margin: 0;
+    padding: 0;
+    height: 6px;
+}
+
+#messages-container .error {
+    background-color: indianred;
+    color: darkred;
+}

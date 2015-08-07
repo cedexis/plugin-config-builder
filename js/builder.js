@@ -64,28 +64,30 @@ $(function() {
             displayConfig: function() {
                 var area = $('#config-area-impact');
                 var pluginConfig = getSelectedPluginData();
-                var i;
-                var option;
-                var select = $('select.layouts', area);
-                for (i in pluginConfig['layouts']) {
-                    if (pluginConfig['layouts'].hasOwnProperty(i)) {
-                        option = $(document.createElement('option'));
-                        option.text(i)
-                            .val(i)
-                            .appendTo(select);
+                if (pluginConfig) {
+                    var i;
+                    var option;
+                    var select = $('select.layouts', area);
+                    for (i in pluginConfig['layouts']) {
+                        if (pluginConfig['layouts'].hasOwnProperty(i)) {
+                            option = $(document.createElement('option'));
+                            option.text(i)
+                                .val(i)
+                                .appendTo(select);
+                        }
                     }
-                }
-                select.change();
-                select = $('select.sites', area);
-                for (i in pluginConfig['sites']) {
-                    if (pluginConfig['sites'].hasOwnProperty(i)) {
-                        option = $(document.createElement('option'));
-                        option.text(i)
-                            .val(i)
-                            .appendTo(select);
+                    select.change();
+                    select = $('select.sites', area);
+                    for (i in pluginConfig['sites']) {
+                        if (pluginConfig['sites'].hasOwnProperty(i)) {
+                            option = $(document.createElement('option'));
+                            option.text(i)
+                                .val(i)
+                                .appendTo(select);
+                        }
                     }
+                    select.change();
                 }
-                select.change();
                 area.show();
             }
         },
@@ -243,7 +245,7 @@ $(function() {
             text = 'Missing plugin configuration';
         }
         var lines = text.split('\n');
-        textArea.text(text);
+        textArea.val(text);
         textArea.prop('rows', lines.length);
         $('#json-area').show();
     }
@@ -477,9 +479,27 @@ $(function() {
         } else {
             disabled = true;
             buttonText = 'Edit';
-            var newData = JSON.parse(textArea.val());
-            debugger;
-            setSelectedPluginData(newData);
+            var temp = textArea.val();
+            var newData;
+            if ('string' === typeof temp) {
+                try {
+                    newData = JSON.parse(temp);
+                } catch (ignore) {
+                    displayMessage(
+                        'error',
+                        [
+                            'Error parsing JSON.',
+                            '',
+                            'Error message: ' + ignore.message
+                        ]);
+                    return;
+                }
+            }
+            if (newData) {
+                setSelectedPluginData(newData);
+            } else {
+                displayJSON();
+            }
         }
         textArea.prop('disabled', disabled);
         button.text(buttonText);
