@@ -33,6 +33,7 @@ hr {
 
 #json-area textarea {
     width: 100%;
+    box-sizing: border-box;
     padding: 1em;
 }
 
@@ -48,11 +49,11 @@ hr {
     margin-top: 1.4em;
 }
 
-.section-container {
+.container {
     margin: 12px 0;
 }
 
-.section-container.category {
+.container.category {
     padding: 12px;
     border: 1px solid gainsboro;
 }

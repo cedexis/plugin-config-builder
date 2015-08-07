@@ -1,12 +1,19 @@
 $(function() {
 
     $('#plugin-selection-area button.add').click(addPlugin);
-    $('#plugin-selection-area .add-container button.confirm').click(confirmAddPlugin);
+    $('#plugin-selection-area button.cancel').click(function() {
+        $('#plugin-selection-area div.container').hide();
+    });
+
+    $('#plugin-selection-area .container button.confirm').click(confirmAddPlugin);
     $('#config-area-impact button.layouts.add').click(addImpactLayout);
     $('#config-area-impact button.layouts.confirm').click(confirmAddImpactLayout);
     $('#config-area-impact button.sites.add').click(addImpactSite);
     $('#config-area-impact button.sites.confirm').click(confirmAddImpactSite);
-    $('#lookup-customer').click(displayPluginSelection);
+    $('#lookup-customer').click(function() {
+        displayPluginSelection();
+        $('#plugin-selection-area select').change();
+    });
 
     $('#text-area-edit').click(onTextAreaEditButtonClick);
 
@@ -147,11 +154,12 @@ $(function() {
         console.log(match);
         if (match && match[1]) {
             $("#customer-id").val(match[1]);
+            displayPluginSelection();
             match = /pluginname=(\w+)/i.exec(window.location.search);
             if (match && match[1]) {
                 setSelectedPlugin(match[1]);
             } else {
-                displayPluginSelection();
+                $('#plugin-selection-area select').change();
             }
         }
     }());
@@ -232,7 +240,6 @@ $(function() {
             }
         }
         $('#plugin-selection-area').show();
-        select.change();
     }
 
     function displayJSON() {
@@ -252,8 +259,9 @@ $(function() {
 
     function addPlugin() {
         console.log('addPlugin');
-        var container = $('#plugin-selection-area div.add-container');
-        var select = $('#plugin-selection-area .add-container select.plugins');
+        var container = $('#plugin-selection-area div.container');
+        var select = $('#plugin-selection-area .container select.plugins');
+        select.empty();
         var customerData = getCustomerData();
         var candidates = Object.keys(builderConfig).sort();
         for (var i = 0; i < candidates.length; i++) {
@@ -269,13 +277,13 @@ $(function() {
 
     function addImpactSite() {
         console.log('addImpactSite');
-        var container = $('#config-area-impact .sites div.add-container');
+        var container = $('#config-area-impact .sites div.container');
         container.show();
     }
 
     function confirmAddImpactSite() {
         console.log('confirmAddImpactSite');
-        var input = $("#config-area-impact .sites div.add-container input");
+        var input = $("#config-area-impact .sites div.container input");
         var value = input.val();
         if (value && 'string' === typeof value) {
             var data = getSelectedPluginData();
@@ -293,18 +301,18 @@ $(function() {
             option.text(value).val(value);
             $('#config-area-impact select.sites').append(option).val(value).change();
         }
-        $("#config-area-impact .sites div.add-container").hide();
+        $("#config-area-impact .sites div.container").hide();
     }
 
     function addImpactLayout() {
         console.log('addImpactLayout');
-        var container = $('#config-area-impact .layouts div.add-container');
+        var container = $('#config-area-impact .layouts div.container');
         container.show();
     }
 
     function confirmAddImpactLayout() {
         console.log('confirmAddImpactLayout');
-        var input = $("#config-area-impact .layouts div.add-container input");
+        var input = $("#config-area-impact .layouts div.container input");
         var value = input.val();
         if (value && 'string' === typeof value) {
             var data = getSelectedPluginData();
@@ -318,12 +326,12 @@ $(function() {
             option.text(value).val(value);
             $('#config-area-impact select.layouts').append(option).val(value).change();
         }
-        $("#config-area-impact .layouts div.add-container").hide();
+        $("#config-area-impact .layouts div.container").hide();
     }
 
     function confirmAddPlugin() {
         var pluginsContainer = $('#plugin-selection-area');
-        var addContainer = $('#plugin-selection-area .add-container');
+        var addContainer = $('#plugin-selection-area .container');
         var value = $('select', addContainer).val();
         console.log(value);
         addContainer.hide();
@@ -370,7 +378,7 @@ $(function() {
     function buildImpactCategoryPanel(config, index) {
         console.log(config);
         var container = $(document.createElement('div'));
-        container.addClass('category section-container');
+        container.addClass('container category');
         container.data('index', index);
         var innerContainer = $(document.createElement('div'))
             .appendTo(container);
